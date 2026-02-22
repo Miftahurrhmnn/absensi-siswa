@@ -8,7 +8,13 @@ import ImportExcel from "./components/ImportExcel";
 import AddStudentModal from "./components/AddStudentModal";
 import StatsCard from "./components/StatsCard";
 
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Switch,
+  Redirect
+} from "react-router-dom";
+
 import JurnalMengajar from "./pages/JurnalMengajar";
 import Login from "./pages/Login";
 
@@ -18,19 +24,19 @@ function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
 
-  // ================= LOAD USER =================
+  // ===== LOAD USER =====
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
-  // ================= LOAD ABSENSI =================
+  // ===== LOAD ABSENSI =====
   useEffect(() => {
     const saved = localStorage.getItem("absensi");
     if (saved) setStudents(JSON.parse(saved));
   }, []);
 
-  // ================= SAVE ABSENSI =================
+  // ===== SAVE ABSENSI =====
   useEffect(() => {
     localStorage.setItem("absensi", JSON.stringify(students));
   }, [students]);
@@ -39,7 +45,7 @@ function App() {
     <Router>
       <Switch>
 
-        {/* ================= LOGIN PAGE ================= */}
+        {/* ================= LOGIN ================= */}
         <Route path="/login">
           {user ? <Redirect to="/" /> : <Login setUser={setUser} />}
         </Route>
@@ -68,12 +74,14 @@ function App() {
 
                   <Switch>
 
-                    {/* ===== ABSENSI ===== */}
+                    {/* ===== DASHBOARD ===== */}
                     <Route exact path="/">
+                      <StatsCard students={students} />
+                    </Route>
+
+                    {/* ===== ABSENSI ===== */}
+                    <Route path="/absensi">
                       <div className="space-y-4">
-
-                        <StatsCard students={students} />
-
                         <div className="flex flex-wrap items-center gap-3">
                           <button
                             onClick={() => setOpenModal(true)}
@@ -92,6 +100,7 @@ function App() {
                           students={students}
                           setStudents={setStudents}
                         />
+
                       </div>
                     </Route>
 
@@ -100,7 +109,7 @@ function App() {
                       <JurnalMengajar user={user} />
                     </Route>
 
-                    {/* ===== DEFAULT REDIRECT ===== */}
+                    {/* DEFAULT */}
                     <Redirect to="/" />
 
                   </Switch>

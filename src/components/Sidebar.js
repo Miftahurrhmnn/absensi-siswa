@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { ClipboardList } from "lucide-react";
 import {
   LayoutDashboard,
   BookOpen,
@@ -52,9 +53,19 @@ export default function Sidebar({ open, close }) {
             exact
             to="/"
             activeClassName="bg-white text-indigo-700"
-            className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all duration-200"
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition"
           >
             <LayoutDashboard size={20} />
+            Dashboard
+          </NavLink>
+
+          <NavLink
+            exact
+            to="/absensi"
+            activeClassName="bg-white text-indigo-700"
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all duration-200"
+          >
+            <ClipboardList size={20} />
             <span className="text-sm font-medium">Absensi</span>
           </NavLink>
 

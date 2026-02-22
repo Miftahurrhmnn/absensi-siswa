@@ -5,6 +5,19 @@ import { Trash2, Download } from "lucide-react";
 
 export default function StudentTable({ students, setStudents }) {
 
+  const [selectedClass, setSelectedClass] = React.useState("");
+
+  // ================= UNIQUE KELAS =================
+  const uniqueClasses = [
+    ...new Set(students.map((s) => s.kelas))
+  ];
+
+  // ================= FILTER DATA =================
+  const filteredStudents = selectedClass
+    ? students.filter((s) => s.kelas === selectedClass)
+    : students;
+
+  // ================= UPDATE STATUS =================
   const updateStatus = (id, status) => {
     const updated = students.map((s) =>
       s.id === id ? { ...s, status } : s
@@ -12,14 +25,21 @@ export default function StudentTable({ students, setStudents }) {
     setStudents(updated);
   };
 
+  // ================= DELETE =================
   const deleteStudent = (id) => {
     const confirmDelete = window.confirm("Yakin mau hapus siswa ini?");
     if (!confirmDelete) return;
     setStudents(students.filter((s) => s.id !== id));
   };
 
+  // ================= EXPORT =================
   const exportExcel = () => {
-    const data = students.map((s, i) => ({
+    if (filteredStudents.length === 0) {
+      alert("Tidak ada data untuk diexport");
+      return;
+    }
+
+    const data = filteredStudents.map((s, i) => ({
       No: i + 1,
       Nama: s.name,
       Kelas: s.kelas,
@@ -40,9 +60,13 @@ export default function StudentTable({ students, setStudents }) {
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     });
 
-    saveAs(blob, `Absensi-${new Date().toLocaleDateString()}.xlsx`);
+    saveAs(
+      blob,
+      `Absensi-${selectedClass || "Semua-Kelas"}.xlsx`
+    );
   };
 
+  // ================= STATUS STYLE =================
   const statusStyle = (status) => {
     switch (status) {
       case "Hadir":
@@ -61,22 +85,42 @@ export default function StudentTable({ students, setStudents }) {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
 
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
+      {/* HEADER + FILTER */}
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
+
         <h2 className="text-lg font-semibold text-slate-700">
           Data Absensi Siswa
         </h2>
 
-        <button
-          onClick={exportExcel}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm transition"
-        >
-          <Download size={16} />
-          Export Excel
-        </button>
+        <div className="flex gap-3 items-center">
+
+          {/* FILTER KELAS */}
+          <select
+            value={selectedClass}
+            onChange={(e) => setSelectedClass(e.target.value)}
+            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-400"
+          >
+            <option value="">Semua Kelas</option>
+            {uniqueClasses.map((kelas, index) => (
+              <option key={index} value={kelas}>
+                {kelas}
+              </option>
+            ))}
+          </select>
+
+          {/* EXPORT BUTTON */}
+          <button
+            onClick={exportExcel}
+            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm transition"
+          >
+            <Download size={16} />
+            Export
+          </button>
+
+        </div>
       </div>
 
-      {/* Desktop Table */}
+      {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -90,7 +134,7 @@ export default function StudentTable({ students, setStudents }) {
           </thead>
 
           <tbody>
-            {students.map((s, i) => (
+            {filteredStudents.map((s, i) => (
               <tr
                 key={s.id}
                 className="border-t border-slate-100 hover:bg-slate-50 transition"
@@ -133,9 +177,9 @@ export default function StudentTable({ students, setStudents }) {
         </table>
       </div>
 
-      {/* Mobile Card Mode */}
+      {/* ================= MOBILE CARD ================= */}
       <div className="md:hidden space-y-4">
-        {students.map((s) => (
+        {filteredStudents.map((s) => (
           <div
             key={s.id}
             className="border border-slate-200 rounded-xl p-4 shadow-sm"
