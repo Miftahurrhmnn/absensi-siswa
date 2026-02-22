@@ -1,6 +1,7 @@
 import React from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { Trash2, Download } from "lucide-react";
 
 export default function StudentTable({ students, setStudents }) {
 
@@ -9,6 +10,12 @@ export default function StudentTable({ students, setStudents }) {
       s.id === id ? { ...s, status } : s
     );
     setStudents(updated);
+  };
+
+  const deleteStudent = (id) => {
+    const confirmDelete = window.confirm("Yakin mau hapus siswa ini?");
+    if (!confirmDelete) return;
+    setStudents(students.filter((s) => s.id !== id));
   };
 
   const exportExcel = () => {
@@ -21,7 +28,6 @@ export default function StudentTable({ students, setStudents }) {
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-
     XLSX.utils.book_append_sheet(workbook, worksheet, "Absensi");
 
     const excelBuffer = XLSX.write(workbook, {
@@ -37,71 +43,140 @@ export default function StudentTable({ students, setStudents }) {
     saveAs(blob, `Absensi-${new Date().toLocaleDateString()}.xlsx`);
   };
 
-  const deleteStudent = (id) => {
-    const confirmDelete = window.confirm("Yakin mau hapus siswa ini?");
-    if (!confirmDelete) return;
-
-    const filtered = students.filter((s) => s.id !== id);
-    setStudents(filtered);
+  const statusStyle = (status) => {
+    switch (status) {
+      case "Hadir":
+        return "bg-emerald-100 text-emerald-600";
+      case "Izin":
+        return "bg-yellow-100 text-yellow-600";
+      case "Sakit":
+        return "bg-blue-100 text-blue-600";
+      case "Alpha":
+        return "bg-rose-100 text-rose-600";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
   };
 
   return (
-    <div className="bg-white rounded-xl shadow p-4 overflow-x-auto">
-      <div className="flex justify-end mb-3">
+    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
+
+      {/* Header */}
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-lg font-semibold text-slate-700">
+          Data Absensi Siswa
+        </h2>
+
         <button
           onClick={exportExcel}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition"
+          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm transition"
         >
+          <Download size={16} />
           Export Excel
         </button>
       </div>
 
-      <table className="w-full text-center">
-       <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2">No</th>
-            <th className="p-2">Nama</th>
-            <th className="p-2">Kelas</th>
-            <th className="p-2">Status</th>
-            <th className="p-2">Aksi</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {students.map((s, i) => (
-            <tr key={s.id} className="border-t">
-              <td className="p-2">{i + 1}</td>
-              <td className="p-2">{s.name}</td>
-              <td className="p-2">{s.kelas}</td>
-
-              <td className="p-2 space-x-2">
-                {["Hadir", "Izin", "Sakit", "Alpha"].map((st) => (
-                  <button
-                    key={st}
-                    onClick={() => updateStatus(s.id, st)}
-                    className={`px-2 py-1 rounded text-sm ${
-                      s.status === st
-                        ? "bg-blue-600 text-white"
-                        : "bg-gray-200"
-                    }`}
-                  >
-                    {st}
-                  </button>
-                ))}
-              </td>
-
-              <td className="p-2">
-                <button
-                  onClick={() => deleteStudent(s.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition"
-                >
-                  Hapus
-                </button>
-              </td>
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="bg-slate-50 text-slate-600">
+              <th className="p-3 text-left">No</th>
+              <th className="p-3 text-left">Nama</th>
+              <th className="p-3 text-left">Kelas</th>
+              <th className="p-3 text-left">Status</th>
+              <th className="p-3 text-center">Aksi</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+            {students.map((s, i) => (
+              <tr
+                key={s.id}
+                className="border-t border-slate-100 hover:bg-slate-50 transition"
+              >
+                <td className="p-3">{i + 1}</td>
+                <td className="p-3 font-medium text-slate-700">
+                  {s.name}
+                </td>
+                <td className="p-3 text-slate-500">{s.kelas}</td>
+
+                <td className="p-3">
+                  <div className="flex gap-2 flex-wrap">
+                    {["Hadir", "Izin", "Sakit", "Alpha"].map((st) => (
+                      <button
+                        key={st}
+                        onClick={() => updateStatus(s.id, st)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+                          s.status === st
+                            ? statusStyle(st)
+                            : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+                        }`}
+                      >
+                        {st}
+                      </button>
+                    ))}
+                  </div>
+                </td>
+
+                <td className="p-3 text-center">
+                  <button
+                    onClick={() => deleteStudent(s.id)}
+                    className="text-rose-500 hover:text-rose-600 transition"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Mobile Card Mode */}
+      <div className="md:hidden space-y-4">
+        {students.map((s) => (
+          <div
+            key={s.id}
+            className="border border-slate-200 rounded-xl p-4 shadow-sm"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <div>
+                <p className="font-semibold text-slate-700">
+                  {s.name}
+                </p>
+                <p className="text-sm text-slate-500">
+                  {s.kelas}
+                </p>
+              </div>
+
+              <button
+                onClick={() => deleteStudent(s.id)}
+                className="text-rose-500"
+              >
+                <Trash2 size={18} />
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {["Hadir", "Izin", "Sakit", "Alpha"].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => updateStatus(s.id, st)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition ${
+                    s.status === st
+                      ? statusStyle(st)
+                      : "bg-slate-100 text-slate-400"
+                  }`}
+                >
+                  {st}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
     </div>
   );
 }

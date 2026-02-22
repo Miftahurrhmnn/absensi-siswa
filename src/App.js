@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./input.css";
+
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import StudentTable from "./components/StudentTable";
@@ -7,60 +8,120 @@ import ImportExcel from "./components/ImportExcel";
 import AddStudentModal from "./components/AddStudentModal";
 import StatsCard from "./components/StatsCard";
 
+import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import JurnalMengajar from "./pages/JurnalMengajar";
+import Login from "./pages/Login";
+
 function App() {
   const [students, setStudents] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
-  // Load dari localStorage
+  // ================= LOAD USER =================
+  useEffect(() => {
+    const savedUser = localStorage.getItem("user");
+    if (savedUser) setUser(JSON.parse(savedUser));
+  }, []);
+
+  // ================= LOAD ABSENSI =================
   useEffect(() => {
     const saved = localStorage.getItem("absensi");
     if (saved) setStudents(JSON.parse(saved));
   }, []);
 
+  // ================= SAVE ABSENSI =================
   useEffect(() => {
     localStorage.setItem("absensi", JSON.stringify(students));
   }, [students]);
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
+    <Router>
+      <Switch>
 
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header />
+        {/* ================= LOGIN PAGE ================= */}
+        <Route path="/login">
+          {user ? <Redirect to="/" /> : <Login setUser={setUser} />}
+        </Route>
 
-        <main className="p-4 overflow-y-auto space-y-4">
+        {/* ================= PROTECTED ROUTES ================= */}
+        <Route>
+          {!user ? (
+            <Redirect to="/login" />
+          ) : (
+            <div className="flex h-screen bg-slate-100">
 
-          {/* Statistik */}
-          <StatsCard students={students} />
+              <Sidebar
+                open={sidebarOpen}
+                close={() => setSidebarOpen(false)}
+              />
 
-          {/* Action Section */}
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setOpenModal(true)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition"
-            >
-              + Tambah Siswa
-            </button>
+              <div className="flex-1 flex flex-col overflow-hidden">
 
-            <ImportExcel setStudents={setStudents} students={students} />
-          </div>
+                <Header
+                  toggleSidebar={() => setSidebarOpen(true)}
+                  user={user}
+                  setUser={setUser}
+                />
 
-          {/* Table */}
-          <StudentTable
-            students={students}
-            setStudents={setStudents}
-          />
-        </main>
-      </div>
+                <main className="p-4 overflow-y-auto">
 
-      {openModal && (
-        <AddStudentModal
-          setStudents={setStudents}
-          students={students}
-          close={() => setOpenModal(false)}
-        />
-      )}
-    </div>
+                  <Switch>
+
+                    {/* ===== ABSENSI ===== */}
+                    <Route exact path="/">
+                      <div className="space-y-4">
+
+                        <StatsCard students={students} />
+
+                        <div className="flex flex-wrap items-center gap-3">
+                          <button
+                            onClick={() => setOpenModal(true)}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow hover:bg-indigo-700 transition"
+                          >
+                            + Tambah Siswa
+                          </button>
+
+                          <ImportExcel
+                            setStudents={setStudents}
+                            students={students}
+                          />
+                        </div>
+
+                        <StudentTable
+                          students={students}
+                          setStudents={setStudents}
+                        />
+                      </div>
+                    </Route>
+
+                    {/* ===== JURNAL ===== */}
+                    <Route path="/jurnal">
+                      <JurnalMengajar user={user} />
+                    </Route>
+
+                    {/* ===== DEFAULT REDIRECT ===== */}
+                    <Redirect to="/" />
+
+                  </Switch>
+
+                </main>
+              </div>
+
+              {openModal && (
+                <AddStudentModal
+                  setStudents={setStudents}
+                  students={students}
+                  close={() => setOpenModal(false)}
+                />
+              )}
+
+            </div>
+          )}
+        </Route>
+
+      </Switch>
+    </Router>
   );
 }
 
