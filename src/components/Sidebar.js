@@ -94,7 +94,7 @@ export default function Sidebar({ open, close }) {
 
         {/* Footer */}
         <div className="absolute bottom-0 w-full p-4 text-xs text-indigo-200 border-t border-indigo-500">
-          © 2026 Sistem Guru
+          © 2026 Miftahurrahman | All Rights Reserved
         </div>
       </aside>
     </>

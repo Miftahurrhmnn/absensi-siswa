@@ -50,6 +50,11 @@ export default function JurnalMengajar() {
   };
 
   const exportExcel = () => {
+    if (jurnal.length === 0) {
+      alert("Tidak ada data untuk diexport");
+      return;
+    }
+
     const data = jurnal.map((item, index) => ({
       No: index + 1,
       Hari: item.hari,
