@@ -32,9 +32,16 @@ export default function Sidebar({ open, close }) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-indigo-500">
           <div>
-            <h1 className="text-lg font-bold tracking-wide">
-              MTs Negeri 12
-            </h1>
+            <div className="flex items-center gap-2">
+              <img
+                src="./assets/logo.png"
+                alt="Logo"
+                className="w-10 h-10 object-cover"
+              />
+              <h1 className="text-sm font-bold tracking-wide">
+                MTS Negeri 12 Jakarta
+              </h1>
+            </div>
             <p className="text-xs text-indigo-200">
               Admin Dashboard
             </p>
@@ -52,6 +59,7 @@ export default function Sidebar({ open, close }) {
           <NavLink
             exact
             to="/"
+            onClick={close}
             activeClassName="bg-white text-indigo-700"
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition"
           >
@@ -62,6 +70,7 @@ export default function Sidebar({ open, close }) {
           <NavLink
             exact
             to="/absensi"
+            onClick={close}
             activeClassName="bg-white text-indigo-700"
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all duration-200"
           >
@@ -71,6 +80,7 @@ export default function Sidebar({ open, close }) {
 
           <NavLink
             to="/jurnal"
+            onClick={close}
             activeClassName="bg-white text-indigo-700"
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all duration-200"
           >
