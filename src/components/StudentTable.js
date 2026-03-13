@@ -41,6 +41,7 @@ export default function StudentTable({ students, setStudents }) {
 
     const data = filteredStudents.map((s, i) => ({
       No: i + 1,
+      NIS: s.nis || "-",
       Nama: s.name,
       Kelas: s.kelas,
       Status: s.status
@@ -126,6 +127,7 @@ export default function StudentTable({ students, setStudents }) {
           <thead>
             <tr className="bg-slate-50 text-slate-600">
               <th className="p-3 text-left">No</th>
+              <th className="p-3 text-left">NIS</th>
               <th className="p-3 text-left">Nama</th>
               <th className="p-3 text-left">Kelas</th>
               <th className="p-3 text-left">Status</th>
@@ -140,6 +142,7 @@ export default function StudentTable({ students, setStudents }) {
                 className="border-t border-slate-100 hover:bg-slate-50 transition"
               >
                 <td className="p-3">{i + 1}</td>
+                <td className="p-3 font-mono text-xs text-slate-400">{s.nis || "-"}</td>
                 <td className="p-3 font-medium text-slate-700">
                   {s.name}
                 </td>
@@ -151,11 +154,10 @@ export default function StudentTable({ students, setStudents }) {
                       <button
                         key={st}
                         onClick={() => updateStatus(s.id, st)}
-                        className={`px-3 py-1 rounded-full text-xs font-medium transition ${
-                          s.status === st
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition ${s.status === st
                             ? statusStyle(st)
                             : "bg-slate-100 text-slate-400 hover:bg-slate-200"
-                        }`}
+                          }`}
                       >
                         {st}
                       </button>
@@ -189,8 +191,11 @@ export default function StudentTable({ students, setStudents }) {
                 <p className="font-semibold text-slate-700">
                   {s.name}
                 </p>
-                <p className="text-sm text-slate-500">
-                  {s.kelas}
+                <p className="text-xs text-slate-400 font-mono">
+                  NIS: {s.nis || "-"}
+                </p>
+                <p className="text-sm text-slate-500 font-medium">
+                  Kelas: {s.kelas}
                 </p>
               </div>
 
@@ -207,11 +212,10 @@ export default function StudentTable({ students, setStudents }) {
                 <button
                   key={st}
                   onClick={() => updateStatus(s.id, st)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium transition ${
-                    s.status === st
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition ${s.status === st
                       ? statusStyle(st)
                       : "bg-slate-100 text-slate-400"
-                  }`}
+                    }`}
                 >
                   {st}
                 </button>

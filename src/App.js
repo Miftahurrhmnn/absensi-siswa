@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./input.css";
 
 import Sidebar from "./components/Sidebar";
@@ -17,6 +17,8 @@ import {
 
 import JurnalMengajar from "./pages/JurnalMengajar";
 import Login from "./pages/Login";
+import DataSiswa from "./pages/DataSiswa";
+import NilaiSiswa from "./pages/NilaiSiswa";
 
 function App() {
   const [students, setStudents] = useState([]);
@@ -30,15 +32,23 @@ function App() {
     if (savedUser) setUser(JSON.parse(savedUser));
   }, []);
 
-  // ===== LOAD ABSENSI =====
+  const isMounted = useRef(false);
+
+  // ===== LOAD DATA SISWA (MASTER & ABSENSI) =====
   useEffect(() => {
-    const saved = localStorage.getItem("absensi");
-    if (saved) setStudents(JSON.parse(saved));
+    const saved = localStorage.getItem("dataSiswa");
+    if (saved) {
+      setStudents(JSON.parse(saved));
+    }
   }, []);
 
-  // ===== SAVE ABSENSI =====
+  // ===== SAVE DATA SISWA =====
   useEffect(() => {
-    localStorage.setItem("absensi", JSON.stringify(students));
+    if (isMounted.current) {
+      localStorage.setItem("dataSiswa", JSON.stringify(students));
+    } else {
+      isMounted.current = true;
+    }
   }, [students]);
 
   return (
@@ -104,9 +114,19 @@ function App() {
                       </div>
                     </Route>
 
+                    {/* ===== DATA SISWA ===== */}
+                    <Route path="/data-siswa">
+                      <DataSiswa students={students} setStudents={setStudents} />
+                    </Route>
+
                     {/* ===== JURNAL ===== */}
                     <Route path="/jurnal">
                       <JurnalMengajar user={user} />
+                    </Route>
+
+                    {/* ===== NILAI SISWA ===== */}
+                    <Route path="/nilai">
+                      <NilaiSiswa />
                     </Route>
 
                     {/* DEFAULT */}

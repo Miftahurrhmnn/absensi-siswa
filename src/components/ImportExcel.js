@@ -25,6 +25,7 @@ export default function ImportExcel({ setStudents, students }) {
 
       const formattedData = jsonData.map((item) => ({
         id: Date.now() + Math.random(),
+        nis: item.NIS || item.nis || "",
         name: item.Nama || item.nama,
         kelas: item.Kelas || item.kelas,
         status: "Hadir"

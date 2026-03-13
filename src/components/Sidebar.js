@@ -4,6 +4,8 @@ import { ClipboardList } from "lucide-react";
 import {
   LayoutDashboard,
   BookOpen,
+  GraduationCap,
+  Calculator,
   X
 } from "lucide-react";
 
@@ -64,7 +66,19 @@ export default function Sidebar({ open, close }) {
             className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition"
           >
             <LayoutDashboard size={20} />
-            Dashboard
+            Beranda
+          </NavLink>
+
+          <NavLink
+            to="/data-siswa"
+            onClick={close}
+            activeClassName="bg-white text-indigo-700"
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all duration-200"
+          >
+            <GraduationCap size={20} />
+            <span className="text-sm font-medium">
+              Data Siswa
+            </span>
           </NavLink>
 
           <NavLink
@@ -87,6 +101,18 @@ export default function Sidebar({ open, close }) {
             <BookOpen size={20} />
             <span className="text-sm font-medium">
               Jurnal Mengajar
+            </span>
+          </NavLink>
+
+          <NavLink
+            to="/nilai"
+            onClick={close}
+            activeClassName="bg-white text-indigo-700"
+            className="flex items-center gap-3 p-3 rounded-xl hover:bg-indigo-500 transition-all duration-200"
+          >
+            <Calculator size={20} />
+            <span className="text-sm font-medium">
+              Penilaian Siswa
             </span>
           </NavLink>
 
