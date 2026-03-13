@@ -2,9 +2,6 @@ import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import {
-  Calendar,
-  School,
-  Clock,
   Users,
   BookOpen,
   FileText,
@@ -13,7 +10,6 @@ import {
   PlusCircle,
   CheckCircle2,
   UserX,
-  MoreVertical
 } from "lucide-react";
 
 export default function JurnalMengajar() {
